@@ -1,3 +1,16 @@
+import {Category} from './enums';
+import {DamageLogger, Librarian, Author, Person, Book, Magazine} from './interfaces';
+import {
+    getBooksByCategory,
+    getBooksByCategoryPromise,
+    logCategorySearch,
+    logSearchResults,
+    purge
+} from './lib/utility-functions';
+import RefBook from './encyclopedia';
+import Shelf from './shelf';
+import {UniversityLibrarian} from './classes';
+
 showHello('greeting', 'TypeScript');
 
 function showHello(divName: string, name: string) {
@@ -5,129 +18,7 @@ function showHello(divName: string, name: string) {
     elt.innerText = `Hello from ${name}`;
 }
 
-enum Category {
-    JavaScript,
-    CSS,
-    HTML,
-    TypeScript,
-    Angular
-}
 
-interface DamageLogger {
-    (reason: string): void
-}
-
-interface Book {
-    id: number;
-    title: string;
-    author: string;
-    available: boolean;
-    category: Category;
-    pages?: number;
-    markDamaged?: DamageLogger
-}
-
-interface Person {
-    name: string;
-    email: string;
-}
-
-interface Author extends Person {
-    numBookSPublished: number;
-}
-
-interface Librarian extends Person {
-    department: string;
-    assistCustomer: (custName: string) => void
-}
-
-function getBookTitlesByCategory(category: Category = Category.JavaScript): Array<string> {
-    return getAllBooks()
-        .filter(b => b.category === category)
-        .map(b => b.title);
-}
-
-function logBookTitles(BookTitles: string[]): void {
-    BookTitles.forEach(b => console.log(b));
-}
-
-function getAllBooks(): Book[] {
-    const books: Book[] = [
-        {
-            id: 1,
-            title: 'Refactoring JavaScript',
-            author: 'Evan Burchard',
-            available: true,
-            category: Category.JavaScript
-        },
-        {
-            id: 2,
-            title: 'JavaScript Testing',
-            author: 'Liang Yuxian Eugene',
-            available: false,
-            category: Category.JavaScript
-        },
-        {id: 3, title: 'CSS Secrets', author: 'Lea Verou', available: true, category: Category.CSS},
-        {
-            id: 4,
-            title: 'Mastering JavaScript Object-Oriented Programming',
-            author: 'Andrea Chiarelli',
-            available: true,
-            category: Category.JavaScript
-        }
-    ];
-
-    return books;
-}
-
-function logFirstAvailable(books: any[] = getAllBooks()): void {
-    const numberOfBooks: number = books.length;
-    let firstAvailableBookTitle: string;
-
-    for (const book of books) {
-        if (book.available) {
-            firstAvailableBookTitle = book.title;
-            break;
-        }
-    }
-
-    console.log(`Total Books: ${numberOfBooks}`);
-    console.log(`First Available Book: ${firstAvailableBookTitle}`);
-}
-
-function createCustomer(name: string, age?: number, city?: string): void {
-    console.log(`Customer name is: ${name}`);
-
-    if (age) {
-        console.log(`Customer age is: ${age}`);
-    }
-
-    if (city) {
-        console.log(`Customer city is: ${city}`);
-    }
-}
-
-function сheckoutBooks(customer: string, ...bookIds: number[]): string[] {
-    console.log(`Customer name is: ${customer}`);
-
-    return bookIds
-        .map(id => getBookByID(id))
-        .filter(book => book.available)
-        .map(book => book.title);
-}
-
-
-function printBook(book: Book): void {
-    console.log(`${book.title} by ${book.author}`)
-}
-
-function getBookByID(id: number): Book {
-    return getAllBooks().find(b => b.id === id)
-}
-
-function createCustomerID(name: string, id: number): string {
-    return `${name}${id}`;
-}
 
 // Task 01.
 // logFirstAvailable(getAllBooks());
@@ -223,3 +114,96 @@ function createCustomerID(name: string, id: number): string {
 
 
 //-------------------------------------------------------------------------------------
+
+// Task 10. Interfaces for Class Types
+
+// const favoriteLibrarian = new UniversityLibrarian();
+// favoriteLibrarian.name = 'Ann';
+// favoriteLibrarian.assistCustomer('Boris');
+//
+// favoriteLibrarian.assistFaculty = () => console.log(`!!!!`);
+//
+// favoriteLibrarian.assistFaculty();
+// try {
+//     favoriteLibrarian.teachCommunity = () => console.log(`asd`);
+// } catch (e) {
+//     console.log(e);
+// }
+// favoriteLibrarian.teachCommunity();
+
+
+// Task 11. Creating and Using Classes
+
+// const ref = new ReferenceItem('Title', 2018);
+// ref.printItem();
+// ref.publisher = 'random publisher';
+//
+// console.log(ref.publisher);
+
+
+// Task 12. Extending Classes
+//
+// const refBook = new RefBook('Our Title', 2018, 10);
+// refBook.printItem();
+
+
+// Task 17.
+// const inventary: Array<Book> = [
+//     {id: 10, title: 'The C Programming Language', author: 'K & R', available: true, category: Category.Software},
+//     {id: 11, title: 'Code Complete', author: 'Steve McConnell', available: true, category: Category.Software},
+//     {id: 12, title: '8-Bit Graphics with Cobol', author: 'A. B.', available: true, category: Category.Software},
+//     {id: 13, title: 'Cool autoexec.bat Scripts!', author: 'C. D.', available: true, category: Category.Software}
+// ];
+
+// const result1 = purge<Book>(inventary);
+// console.log(result1);
+// const result2 = purge([1, 2, 3, 4]);
+// console.log(result2);
+
+// Task 18
+
+// const bookShelf: Shelf<Book> = new Shelf<Book>();
+// inventary.forEach(book => {
+//    bookShelf.add(book);
+// });
+//
+// const firstBook: Book = bookShelf.getFirst();
+// console.log(firstBook);
+//
+// const magazines: Magazine[] = [
+//     { title: 'Programming Language Monthly', publisher: 'Code Mags' },
+//     { title: 'Literary Fiction Quarterly', publisher: 'College Press' },
+//     { title: 'Five Points', publisher: 'GSU' }
+// ];
+//
+// const magazineShelf: Shelf<Magazine> = new Shelf<Magazine>();
+// magazines.forEach(mag => magazineShelf.add(mag));
+//
+// const firstMag = magazineShelf.getFirst();
+// console.log(firstMag);
+//
+// // Task 19.
+//
+// magazineShelf.printTitles();
+// console.log(magazineShelf.find('Five Points'));
+
+// Task 20.1 class decorator
+
+// Task 22
+// console.log('Begin...');
+// getBooksByCategory(Category.JavaScript, logCategorySearch);
+// console.log('End...');
+
+// Task 23
+// console.log('Begin...');
+// getBooksByCategoryPromise(Category.Software)
+//     .then((titles: string[]) => console.log(titles))
+//     .catch((err) => console.log(`Error: ${err}`));
+//
+// console.log('End...');
+
+// Task 24
+console.log('Beginning search...');
+logSearchResults(Category.JavaScript)
+    .catch(reason => console.log(reason));
+console.log('Search submitted...');
